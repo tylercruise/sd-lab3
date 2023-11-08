@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tyler Cruise's Resume</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        h1 {
+            font-size: 28px;
+        }
+        p {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tyler Cruise</h1>
+    </header>
+    <div class="container">
+        <img src="tyler-cruise.jpg" alt="Tyler Cruise">
+        <h1>Summary</h1>
+        <p>
+            I am a Computer Science Engineering student at the University of Iowa. I have a passion for software design and high performance computing.
+        </p>
+        <h1>Experience</h1>
+        <p>
+            <strong>HPC Performance Engineering Intern</strong><br>
+            Cornelis Networks<br>
+            May 2023 - Present
+        </p>
+        <p>
+            <strong>SULI Summer Intern</strong><br>
+            Argonne National Laboratory<br>
+            May 2022 - August 2022
+        </p>
+        <h1>Education</h1>
+        <p>
+            <strong>Bachelor of Science in Computer Science Engineering</strong><br>
+            University of Iowa<br>
+            Prospective Graduation: May 2024
+        </p>
+        <h1>Skills</h1>
+        <ul>
+            <li>Python, C, C++</li>
+            <li>Java, Bash scripting</li>
+            <li>Linux CLI and API</li>
+        </ul>
+
+        <form id="comment-form">
+            <input type="text" id="comment-username" placeholder="Your Username" required>
+            <textarea id="comment-text" placeholder="Your Comment" required></textarea>
+            <button type="submit">Submit Comment</button>
+        </form>
+        <div id="comments"></div>
+
+        <script>
+            // Function to fetch and display comments
+            function fetchAndDisplayComments() {
+                fetch('/get-comments')
+                    .then(response => response.json())
+                    .then(comments => {
+                        const commentsDiv = document.getElementById('comments');
+                        commentsDiv.innerHTML = ''; // Clear existing comments
+                        comments.forEach(comment => {
+                            const commentDiv = document.createElement('div');
+                            commentDiv.innerHTML = `<strong>${comment.username}:</strong> ${comment.comment}`;
+                            commentsDiv.appendChild(commentDiv);
+                        });
+                    });
+            }
+            
+            // Function to handle comment submission
+            function submitComment() {
+                const username = document.getElementById('comment-username').value;
+                const comment = document.getElementById('comment-text').value;
+            
+                fetch('/add-comment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, comment }),
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        // Refresh comments
+                        fetchAndDisplayComments();
+                        // Clear the input fields
+                        document.getElementById('comment-username').value = '';
+                        document.getElementById('comment-text').value = '';
+                    } else {
+                        alert('Failed to add comment.');
+                    }
+                });
+            }
+            
+            // Attach event listeners to the comment form
+            document.getElementById('comment-form').addEventListener('submit', (event) => {
+                event.preventDefault();
+                submitComment();
+            });
+            
+            // Initial fetching and displaying of comments
+            fetchAndDisplayComments();
+
+        </script>
+    </div>
+</body>
+</html>
+
